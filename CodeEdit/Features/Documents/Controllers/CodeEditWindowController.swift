@@ -25,7 +25,6 @@ final class CodeEditWindowController: NSWindowController, NSToolbarDelegate, Obs
     init(window: NSWindow, workspace: WorkspaceDocument) {
         super.init(window: window)
         self.workspace = workspace
-
         setupSplitView(with: workspace)
 
         let view = CodeEditSplitView(controller: splitViewController).ignoresSafeArea()
@@ -189,15 +188,15 @@ final class CodeEditWindowController: NSWindowController, NSToolbarDelegate, Obs
     ) -> NSToolbarItem? {
         switch itemIdentifier {
         case .itemListTrackingSeparator:
-                guard let splitViewController else {
-                    return nil
-                }
+            guard let splitViewController else {
+                return nil
+            }
 
-                return NSTrackingSeparatorToolbarItem(
-                    identifier: .itemListTrackingSeparator,
-                    splitView: splitViewController.splitView,
-                    dividerIndex: 1
-                )
+            return NSTrackingSeparatorToolbarItem(
+                identifier: .itemListTrackingSeparator,
+                splitView: splitViewController.splitView,
+                dividerIndex: 1
+            )
         case .toggleFirstSidebarItem:
             let toolbarItem = NSToolbarItem(itemIdentifier: NSToolbarItem.Identifier.toggleFirstSidebarItem)
             toolbarItem.label = "Navigator Sidebar"
@@ -240,10 +239,6 @@ final class CodeEditWindowController: NSWindowController, NSToolbarDelegate, Obs
         default:
             return NSToolbarItem(itemIdentifier: itemIdentifier)
         }
-    }
-
-    override func windowDidLoad() {
-        super.windowDidLoad()
     }
 
     private func getSelectedCodeFile() -> CodeFileDocument? {
@@ -302,6 +297,22 @@ final class CodeEditWindowController: NSWindowController, NSToolbarDelegate, Obs
                 window?.addChildWindow(panel, ordered: .above)
                 panel.makeKeyAndOrderFront(self)
             }
+        }
+    }
+
+    @IBAction func closeCurrentTab(_ sender: Any) {
+        if (workspace?.tabManager.activeTabGroup.tabs ?? []).isEmpty {
+            self.closeActiveTabGroup(self)
+        } else {
+            workspace?.tabManager.activeTabGroup.closeCurrentTab()
+        }
+    }
+
+    @IBAction func closeActiveTabGroup(_ sender: Any) {
+        if workspace?.tabManager.tabGroups.findSomeTabGroup(except: workspace?.tabManager.activeTabGroup) == nil {
+            NSApp.sendAction(#selector(NSWindow.close), to: nil, from: nil)
+        } else {
+            workspace?.tabManager.activeTabGroup.close()
         }
     }
 }
