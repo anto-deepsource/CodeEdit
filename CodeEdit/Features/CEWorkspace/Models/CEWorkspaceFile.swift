@@ -10,7 +10,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 enum FileItemCodingKeys: String, CodingKey {
-  case id
+    case id
   case url
   case children
   case changeType
@@ -22,7 +22,7 @@ final class CEWorkspaceFile: Codable, Comparable, Hashable, Identifiable, TabBar
   /// The id of the ``FileSystemClient/FileSystemClient/FileItem``.
   ///
   /// This is equal to `url.relativePath`
-  var id: String { url.relativePath }
+    var id:   String { url.relativePath }
 
   /// Returns the file name (e.g.: `Package.swift`)
   var name: String { url.lastPathComponent }
